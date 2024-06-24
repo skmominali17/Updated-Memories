@@ -7,7 +7,11 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const postSchema = new mongoose_1.default.Schema({
     title: String,
     message: String,
-    creator: String,
+    // userId: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'User',
+    //     required: true,
+    // },
     tags: [String],
     image: String,
     likeCount: {
