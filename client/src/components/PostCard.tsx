@@ -35,33 +35,32 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   }),
 }));
 
-export default function PostCard({data}: any) {
+export default function PostCard({ data }: any) {
   const [expanded, setExpanded] = React.useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
   const handleEditClick = () => {
-    navigate(`/post/edit/${data._id}`)
-  }
+    navigate(`/post/edit/${data._id}`);
+  };
 
-  const handleDeleteClick = async() => {
+  const handleDeleteClick = async () => {
     try {
       const response = await deletePostById(data._id);
       console.log(response.data);
     } catch (error) {
       console.log(error);
     }
-    
-  }
+  };
 
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            {`${data.creator[0]}${data.creator[1]}`}
+            {/* {`${data.creator[0]}${data.creator[1]}`} */}H
           </Avatar>
         }
         action={
@@ -69,7 +68,7 @@ export default function PostCard({data}: any) {
             <MoreVertIcon />
           </IconButton>
         }
-        title={data.creator}
+        title="Hardcode"
         subheader={data.createdAt.toLocaleString().slice(0, 10)}
       />
       <CardMedia
@@ -77,9 +76,9 @@ export default function PostCard({data}: any) {
         image={data.image}
         alt="Paella dish"
         sx={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
         }}
       />
       <CardContent>
@@ -108,7 +107,9 @@ export default function PostCard({data}: any) {
           <Typography paragraph>{data.message}</Typography>
         </CardContent>
       </Collapse>
-      <Button onClick={handleDeleteClick} variant="contained">Delete</Button>
+      <Button onClick={handleDeleteClick} variant="contained">
+        Delete
+      </Button>
     </Card>
   );
 }

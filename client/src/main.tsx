@@ -3,21 +3,23 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import SignInSide from "./pages/SignInSide.tsx";
-import SignUp from "./pages/SignUp.tsx";
 import AllPosts from "./pages/AllPosts.tsx";
 import { Provider } from "react-redux";
-import store from "../store/store.ts"
+import store from "../store/store.ts";
 import CreatePost from "./pages/CreatePost.tsx";
 import EditPost from "./pages/EditPost.tsx";
+import Register from "./pages/Register.tsx";
+import Login from "./pages/Login.tsx";
+import Home from "./pages/Home.tsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
-  { path: "/sign-in", element: <SignInSide /> },
-  { path: "/sign-up", element: <SignUp /> },
   { path: "/create-post", element: <CreatePost /> },
   { path: "/all-posts", element: <AllPosts /> },
   { path: "/post/edit/:id", element: <EditPost /> },
+  { path: "/register", element: <Register /> },
+  { path: "/login", element: <Login /> },
+  { path: "/home", element: <Home /> }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

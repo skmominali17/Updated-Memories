@@ -1,10 +1,8 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { TextField, Button, Box, Typography } from "@mui/material";
 import { createPost } from "../api/api";
-import { useSelector } from "react-redux";
 
 type Inputs = {
-  Creator: string;
   Title: string;
   Message: string;
   Tags: string;
@@ -13,8 +11,6 @@ type Inputs = {
 
 const CreatePost = () => {
 
-  const postsObject = useSelector((state: any) => state.posts);
-  console.log("redux post", postsObject.posts);
   const {
     register,
     handleSubmit,
@@ -30,7 +26,6 @@ const CreatePost = () => {
         const base64String = reader.result?.toString();
 
         const formData = {
-          Creator: data.Creator,
           Title: data.Title,
           Message: data.Message,
           Tags: data.Tags,
@@ -63,28 +58,6 @@ const CreatePost = () => {
       <Typography variant="h4" align="center" gutterBottom>
         Create Your Post
       </Typography>
-      <TextField
-        {...register("Creator", { required: true })}
-        label="Creator"
-        variant="outlined"
-        fullWidth
-        margin="normal"
-        error={Boolean(errors.Creator)}
-        helperText={errors.Creator && "Creator is required"}
-        sx={{
-          "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-              borderColor: errors.Creator ? "error.main" : "text.primary",
-            },
-            "&:hover fieldset": {
-              borderColor: errors.Creator ? "error.main" : "primary.main",
-            },
-            "&.Mui-focused fieldset": {
-              borderColor: errors.Creator ? "error.main" : "primary.main",
-            },
-          },
-        }}
-      />
       <TextField
         {...register("Title", { required: true })}
         label="Title"
