@@ -10,6 +10,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { login } from "../api/api";
+import { useNavigate } from "react-router-dom";
 
 function Copyright(props: any) {
   return (
@@ -30,6 +31,7 @@ function Copyright(props: any) {
 }
 
 export default function Login() {
+  const navigate = useNavigate();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -39,15 +41,16 @@ export default function Login() {
     };
 
     try {
-        const resposne = await login(formData);
-        const authHeader = resposne.headers['authorization'];
-        if (authHeader) {
-          const token = authHeader.split(" ")[1];
-          localStorage.setItem("token", token);
-          console.log(token);
-        }
+      const resposne = await login(formData);
+      const authHeader = resposne.headers["authorization"];
+      if (authHeader) {
+        const token = authHeader.split(" ")[1];
+        localStorage.setItem("token", token);
+        navigate("/");
+        console.log(token);
+      }
     } catch (error) {
-        console.log(error)
+      console.log(error);
     }
   };
 
@@ -104,7 +107,7 @@ export default function Login() {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="/register" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>

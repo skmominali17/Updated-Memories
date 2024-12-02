@@ -3,6 +3,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { updatePostById } from "../api/api";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type Inputs = {
   Title: string;
@@ -10,13 +11,11 @@ type Inputs = {
   Tags: string;
 };
 
-
 const EditPost = () => {
-
   const postsObject = useSelector((state: any) => state.posts);
   const { id } = useParams<{ id: string }>();
   const currPost = postsObject.posts.find((post: any) => post._id === id);
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -48,7 +47,7 @@ const EditPost = () => {
         Edit
       </Typography>
       <TextField
-      defaultValue={currPost?.title}
+        defaultValue={currPost?.title}
         {...register("Title")}
         label="Title"
         variant="outlined"
@@ -69,7 +68,7 @@ const EditPost = () => {
         }}
       />
       <TextField
-      defaultValue={currPost?.message}
+        defaultValue={currPost?.message}
         {...register("Message")}
         label="Message"
         variant="outlined"
@@ -92,7 +91,7 @@ const EditPost = () => {
         }}
       />
       <TextField
-      defaultValue={currPost?.tags}
+        defaultValue={currPost?.tags}
         {...register("Tags")}
         label="Tags"
         variant="outlined"
@@ -123,6 +122,7 @@ const EditPost = () => {
             backgroundColor: "primary.dark",
           },
         }}
+        // onClick={()=>navigate('/')}
       >
         Submit
       </Button>

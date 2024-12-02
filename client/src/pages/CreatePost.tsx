@@ -1,6 +1,8 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { TextField, Button, Box, Typography } from "@mui/material";
 import { createPost } from "../api/api";
+import { useNavigate } from "react-router-dom";
+
 
 type Inputs = {
   Title: string;
@@ -16,6 +18,8 @@ const CreatePost = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
+
+  const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     console.log(data);

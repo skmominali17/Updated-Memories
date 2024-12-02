@@ -33,9 +33,9 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const user = yield UserModel_1.default.create({ name, email, password: hashedPassword });
         yield user.save();
         // Generate token with JWT
-        const token = jsonwebtoken_1.default.sign({ id: user._id }, "shhh", { expiresIn: '1h' });
+        const token = jsonwebtoken_1.default.sign({ id: user._id }, "shhh", { expiresIn: "1h" });
         // set the token in authorization header
-        res.setHeader('Authorization', `Bearer ${token}`);
+        res.setHeader("Authorization", `Bearer ${token}`);
         res.status(201).json({ message: "User registered successfully" });
     }
     catch (error) {
@@ -59,7 +59,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Generate Token
     const token = jsonwebtoken_1.default.sign({ id: user._id }, "shhh", { expiresIn: "1h" });
     // set the authorization header
-    res.setHeader('Authorization', `Bearer ${token}`);
+    res.setHeader("Authorization", `Bearer ${token}`);
     res.status(200).json({ message: "Login Succesfully" });
 });
 exports.login = login;
@@ -77,7 +77,7 @@ const getPostById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         if (!mongoose_1.default.Types.ObjectId.isValid(req.params.id)) {
             return res.status(404).json({
-                "message": "Post not found"
+                message: "Post not found",
             });
         }
         const post = yield postModel_1.default.findById(req.params.id);
@@ -92,12 +92,14 @@ const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         if (!mongoose_1.default.Types.ObjectId.isValid(req.params.id)) {
             return res.status(404).json({
-                "message": "Post not found"
+                message: "Post not found",
             });
         }
         yield postModel_1.default.findByIdAndDelete(req.params.id);
         const availablePosts = yield postModel_1.default.find();
-        res.status(200).json({ "message": "Post deleted successfully", availablePosts });
+        res
+            .status(200)
+            .json({ message: "Post deleted successfully", availablePosts });
     }
     catch (error) {
         console.log(error);
@@ -110,14 +112,14 @@ const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             title: req.body.Title,
             message: req.body.Message,
             tags: req.body.Tags,
-            image: req.body.Image
+            image: req.body.Image,
         });
         yield post.save();
-        res.status(201).json({ "message": "Post Created Successfully" });
+        res.status(200).json({ message: "Post Created Successfully" });
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ "message": "Error creating post" });
+        res.status(500).json({ message: "Error creating post" });
     }
 });
 exports.createPost = createPost;
@@ -125,20 +127,19 @@ const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         if (!mongoose_1.default.Types.ObjectId.isValid(req.params.id)) {
             return res.status(404).json({
-                "message": "Post Not Found"
+                message: "Post Not Found",
             });
         }
         const post = yield postModel_1.default.findByIdAndUpdate(req.params.id, {
             title: req.body.Title,
             message: req.body.Message,
             tags: req.body.Tags,
-            image: req.body.Image
+            image: req.body.Image,
         }, {
-            new: true
+            new: true,
         });
-        res.status(200).json({ "message": "Post Updated Successfully", post });
+        res.status(200).json({ message: "Post Updated Successfully", post });
     }
-    catch (error) {
-    }
+    catch (error) { }
 });
 exports.updatePost = updatePost;

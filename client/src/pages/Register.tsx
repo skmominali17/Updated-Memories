@@ -10,6 +10,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { register } from "../api/api";
+import { useNavigate } from "react-router-dom";
 
 function Copyright(props: any) {
   return (
@@ -30,6 +31,7 @@ function Copyright(props: any) {
 }
 
 export default function Register() {
+  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -42,10 +44,11 @@ export default function Register() {
 
     try {
       const response = await register(formData);
-      const authHeader = response.headers['authorization'];
+      const authHeader = response.headers["authorization"];
       if (authHeader) {
         const token = authHeader.split(" ")[1];
         localStorage.setItem("token", token);
+        navigate("/");
         console.log("Token received:", token);
       }
     } catch (error) {
@@ -115,7 +118,7 @@ export default function Register() {
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="/login" variant="body2">
                 Already have an account? Sign in
               </Link>
             </Grid>

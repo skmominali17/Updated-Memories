@@ -7,7 +7,7 @@ router.post("/register", register);
 router.post("/login", login)
 router.get("/", getPosts)
 router.get("/post/:id", getPostById);
-router.post("/", createPost);
+router.post("/create/post", createPost);
 router.put("/post/edit/:id", updatePost);
 router.delete("/post/delete/:id", deletePost);
 
