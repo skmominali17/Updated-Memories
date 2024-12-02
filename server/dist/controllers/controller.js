@@ -113,7 +113,7 @@ const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             image: req.body.Image
         });
         yield post.save();
-        res.status(201).json({ "message": "Post Created Successfully" });
+        res.status(200).json({ "message": "Post Created Successfully" });
     }
     catch (error) {
         console.error(error);

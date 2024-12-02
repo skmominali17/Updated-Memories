@@ -1,46 +1,27 @@
 import * as React from "react";
-import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
-import Collapse from "@mui/material/Collapse";
 import Avatar from "@mui/material/Avatar";
-import IconButton, { IconButtonProps } from "@mui/material/IconButton";
+import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { red } from "@mui/material/colors";
+import { grey, red } from "@mui/material/colors";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import EditIcon from "@mui/icons-material/Edit";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
+import { Menu, MenuItem } from "@mui/material";
 import { deletePostById } from "../api/api";
-// import { setAllPosts } from "../../store/slices/postSlice";
-// import { useDispatch } from "react-redux";
-
-interface ExpandMoreProps extends IconButtonProps {
-  expand: boolean;
-}
-
-const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
-  marginLeft: "auto",
-  transition: theme.transitions.create("transform", {
-    duration: theme.transitions.duration.shortest,
-  }),
-}));
+import { Box } from "@mui/material";
+import { Divider } from "@mui/material";
 
 export default function PostCard({ data }: any) {
-  const [expanded, setExpanded] = React.useState(false);
   const navigate = useNavigate();
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
 
   const handleEditClick = () => {
     navigate(`/post/edit/${data._id}`);
@@ -55,61 +36,127 @@ export default function PostCard({ data }: any) {
     }
   };
 
+  const handleMenuClick = (event: any) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ width: "60vw", height: "100%" }}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            {/* {`${data.creator[0]}${data.creator[1]}`} */}H
+            {/* {`${data.creator[0]}${data.creator[1]}`} */}
           </Avatar>
         }
         action={
-          <IconButton aria-label="settings" onClick={handleEditClick}>
-            <MoreVertIcon />
-          </IconButton>
+          <>
+            <IconButton
+              aria-label="settings"
+              aria-controls={open ? "menu-options" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={handleMenuClick}
+            >
+              <MoreVertIcon />
+            </IconButton>
+            <Menu
+              id="menu-options"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleMenuClose}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+            >
+              <MenuItem
+                onClick={() => {
+                  handleEditClick();
+                  handleMenuClose();
+                }}
+              >
+                Edit
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  handleDeleteClick();
+                  handleMenuClose();
+                }}
+              >
+                Delete
+              </MenuItem>
+            </Menu>
+          </>
         }
         title="Hardcode"
         subheader={data.createdAt.toLocaleString().slice(0, 10)}
       />
-      <CardMedia
-        component="img"
-        image={data.image}
-        alt="Paella dish"
+      <Divider />
+      <Box
         sx={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
+          display: "flex",
+          flexDirection: { lg: "row", xs: "column" },
+          justifyContent: "space-between",
+          // alignItems: { xs: "center" },
+          px: 4,
+          py: 2,
         }}
-      />
-      <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          {data.title}
-        </Typography>
-      </CardContent>
-      <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton>
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
+      >
+        <Box sx={{ width: "30vw", height: "60vh" }}>
+          <CardMedia
+            component="img"
+            image={data.image}
+            alt="Paella dish"
+            sx={{
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+              backgroundColor: grey[100],
+            }}
+          />
+        </Box>
+
+        <Box
+          sx={{
+            width: "25vw",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
         >
-          <ExpandMoreIcon />
-        </ExpandMore>
-      </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography paragraph>{data.message}</Typography>
-        </CardContent>
-      </Collapse>
-      <Button onClick={handleDeleteClick} variant="contained">
-        Delete
-      </Button>
+          <Box>
+            <CardContent>
+              <Typography variant="h5">{data.title}</Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ lineHeight: 2 }}
+              >
+                {data.message}
+              </Typography>
+            </CardContent>
+          </Box>
+          <CardActions sx={{ display: "flex", justifyContent: "end" }}>
+            <IconButton aria-label="add to favorites">
+              <FavoriteIcon />
+            </IconButton>
+            <IconButton aria-label="share">
+              <ShareIcon />
+            </IconButton>
+            <IconButton aria-label="share">
+              <EditIcon onClick={handleEditClick} />
+            </IconButton>
+          </CardActions>
+        </Box>
+      </Box>
     </Card>
   );
 }

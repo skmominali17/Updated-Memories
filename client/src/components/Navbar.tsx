@@ -9,11 +9,13 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
+  const navigate = useNavigate()
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -78,7 +80,9 @@ function Navbar() {
               </Menu>
             </Box>
             <Box>
-              <Button sx={{color: "white"}}>Login</Button>
+              <Button sx={{color: "white"}} onClick={()=>navigate('/login')
+
+              }>Login</Button>
             </Box>
           </Box>
         </Box>

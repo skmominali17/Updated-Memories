@@ -3,6 +3,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
+// import StickyButton from './components/StickyButton';
 
 const MobileBar = () => {
     return (
@@ -30,8 +31,9 @@ const MobileBar = () => {
               <AccountCircleIcon fontSize="medium" />
             </IconButton>
             <IconButton sx={{border: '1px solid #ccc'}}>
-              <SettingsIcon fontSize="medium" />
+              <HomeIcon fontSize="medium" />
             </IconButton>
+            {/* <StickyButton/> */}
             <IconButton sx={{border: '1px solid #ccc'}}>
               <LogoutIcon fontSize="medium" />
             </IconButton>
