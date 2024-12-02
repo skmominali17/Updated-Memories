@@ -10,6 +10,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { grey } from "@mui/material/colors";
 
 function Navbar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
@@ -26,7 +27,7 @@ function Navbar() {
   };
 
   return (
-    <AppBar position="fixed" sx={{ backgroundColor: "#f0f0f0" }}>
+    <AppBar position="fixed" sx={{ backgroundColor: grey[500] }}>
       <Toolbar disableGutters>
         <Box
           sx={{

@@ -23,20 +23,20 @@ const AllPosts = () => {
 
   return (
     <div>
-      <Grid container spacing={2} sx={{ padding: 2 }}>
+      <Grid container spacing={2}>
         {postsObject.posts.map((data: Post) => (
           <Grid
             item
             xs={12}
-            sm={6}
-            md={4}
+            sm={12}
+            md={12}
             lg={12}
             key={data._id}
             sx={{
-              height: "80vh",
               display: "flex",
               justifyContent: "center",
               width: "60vw",
+              my: 1,
             }}
           >
             <PostCard data={data} />

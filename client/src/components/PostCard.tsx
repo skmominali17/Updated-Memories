@@ -11,152 +11,165 @@ import { grey, red } from "@mui/material/colors";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useNavigate } from "react-router-dom";
-import { Menu, MenuItem } from "@mui/material";
+import { ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { deletePostById } from "../api/api";
 import { Box } from "@mui/material";
 import { Divider } from "@mui/material";
 
 export default function PostCard({ data }: any) {
-  const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
+	const navigate = useNavigate();
+	const [anchorEl, setAnchorEl] = React.useState(null);
+	const open = Boolean(anchorEl);
 
-  const handleEditClick = () => {
-    navigate(`/post/edit/${data._id}`);
-  };
+	const handleEditClick = () => {
+		navigate(`/post/edit/${data._id}`);
+	};
 
-  const handleDeleteClick = async () => {
-    try {
-      const response = await deletePostById(data._id);
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+	const handleDeleteClick = async () => {
+		try {
+			const response = await deletePostById(data._id);
+			console.log(response.data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
-  const handleMenuClick = (event: any) => {
-    setAnchorEl(event.currentTarget);
-  };
+	const handleMenuClick = (event: any) => {
+		setAnchorEl(event.currentTarget);
+	};
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+	const handleMenuClose = () => {
+		setAnchorEl(null);
+	};
 
-  return (
-    <Card sx={{ width: "60vw", height: "100%" }}>
-      <CardHeader
-        avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            {/* {`${data.creator[0]}${data.creator[1]}`} */}
-          </Avatar>
-        }
-        action={
-          <>
-            <IconButton
-              aria-label="settings"
-              aria-controls={open ? "menu-options" : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? "true" : undefined}
-              onClick={handleMenuClick}
-            >
-              <MoreVertIcon />
-            </IconButton>
-            <Menu
-              id="menu-options"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleMenuClose}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-            >
-              <MenuItem
-                onClick={() => {
-                  handleEditClick();
-                  handleMenuClose();
-                }}
-              >
-                Edit
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  handleDeleteClick();
-                  handleMenuClose();
-                }}
-              >
-                Delete
-              </MenuItem>
-            </Menu>
-          </>
-        }
-        title="Hardcode"
-        subheader={data.createdAt.toLocaleString().slice(0, 10)}
-      />
-      <Divider />
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: { lg: "row", xs: "column" },
-          justifyContent: "space-between",
-          // alignItems: { xs: "center" },
-          px: 4,
-          py: 2,
-        }}
-      >
-        <Box sx={{ width: "30vw", height: "60vh" }}>
-          <CardMedia
-            component="img"
-            image={data.image}
-            alt="Paella dish"
-            sx={{
-              width: "100%",
-              height: "100%",
-              objectFit: "contain",
-              backgroundColor: grey[100],
-            }}
-          />
-        </Box>
+	return (
+		<Card
+			sx={{
+				width: { xs: "100vw", sm: "60vw" },
+				mx: { xs: 1, sm: 0 },
+			}}
+		>
+			<CardHeader
+				avatar={
+					<Avatar sx={{ bgcolor: red[500] }} aria-label='recipe'>
+						{/* {`${data.creator[0]}${data.creator[1]}`} */}
+					</Avatar>
+				}
+				action={
+					<>
+						<IconButton
+							aria-label='settings'
+							aria-controls={open ? "menu-options" : undefined}
+							aria-haspopup='true'
+							aria-expanded={open ? "true" : undefined}
+							onClick={handleMenuClick}
+						>
+							<MoreVertIcon />
+						</IconButton>
+						<Menu
+							id='menu-options'
+							anchorEl={anchorEl}
+							open={open}
+							onClose={handleMenuClose}
+							anchorOrigin={{
+								vertical: "bottom",
+								horizontal: "center",
+							}}
+							transformOrigin={{
+								vertical: "top",
+								horizontal: "right",
+							}}
+						>
+							<MenuItem
+								onClick={() => {
+									handleEditClick();
+									handleMenuClose();
+								}}
+							>
+								<ListItemIcon>
+									<EditIcon fontSize='small' />
+								</ListItemIcon>
+								<ListItemText>Edit</ListItemText>
+							</MenuItem>
+							<MenuItem
+								onClick={() => {
+									handleDeleteClick();
+									handleMenuClose();
+								}}
+							>
+								<ListItemIcon>
+									<DeleteIcon fontSize='small' />
+								</ListItemIcon>
+								<ListItemText>Delete</ListItemText>
+							</MenuItem>
+						</Menu>
+					</>
+				}
+				title='Hardcode'
+				subheader={data.createdAt.toLocaleString().slice(0, 10)}
+			/>
+			<Divider />
+			<Box
+				sx={{
+					display: "flex",
+					flexDirection: { xs: "column", sm: "row" },
+					justifyContent: "space-between",
+					px: 4,
+					py: 2,
+				}}
+			>
+				<Box
+					sx={{
+						width: { xs: "100%", lg: "30vw" },
+						height: { xs: "50vh", lg: "60vh" },
+					}}
+				>
+					<CardMedia
+						component='img'
+						image={data.image}
+						alt='Paella dish'
+						sx={{
+							width: "100%",
+							height: "100%",
+							objectFit: "contain",
+							backgroundColor: grey[100],
+						}}
+					/>
+				</Box>
 
-        <Box
-          sx={{
-            width: "25vw",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-          }}
-        >
-          <Box>
-            <CardContent>
-              <Typography variant="h5">{data.title}</Typography>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ lineHeight: 2 }}
-              >
-                {data.message}
-              </Typography>
-            </CardContent>
-          </Box>
-          <CardActions sx={{ display: "flex", justifyContent: "end" }}>
-            <IconButton aria-label="add to favorites">
-              <FavoriteIcon />
-            </IconButton>
-            <IconButton aria-label="share">
-              <ShareIcon />
-            </IconButton>
-            <IconButton aria-label="share">
-              <EditIcon onClick={handleEditClick} />
-            </IconButton>
-          </CardActions>
-        </Box>
-      </Box>
-    </Card>
-  );
+				<Box
+					sx={{
+						width: { xs: "100%", lg: "30vw" },
+						display: "flex",
+						flexDirection: "column",
+						justifyContent: "space-between",
+					}}
+				>
+					<Box>
+						<CardContent>
+							<Typography variant='h5'>{data.title}</Typography>
+							<Typography
+								variant='body2'
+								color='text.secondary'
+								sx={{ lineHeight: 2 }}
+							>
+								{data.message}
+							</Typography>
+						</CardContent>
+					</Box>
+					<CardActions sx={{ display: "flex", justifyContent: "end" }}>
+						<IconButton aria-label='like'>
+							<FavoriteIcon />
+						</IconButton>
+						<IconButton aria-label='share'>
+							<ShareIcon />
+						</IconButton>
+					</CardActions>
+				</Box>
+			</Box>
+		</Card>
+	);
 }
