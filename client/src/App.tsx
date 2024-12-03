@@ -5,7 +5,6 @@ import { red } from "@mui/material/colors";
 import MobileBar from "./components/MobileBar";
 import AllPosts from "./components/AllPosts";
 
-
 function App() { 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -37,7 +36,6 @@ function App() {
                 py: 4
               }}
             >
-              {/* <Box> Here we will render all post component </Box> */}
               <AllPosts />
             </Box>
           </Grid>

@@ -52,65 +52,72 @@ export default function PostCard({ data }: any) {
 				mx: { xs: 1, sm: 0 },
 			}}
 		>
-			<CardHeader
-				avatar={
-					<Avatar sx={{ bgcolor: red[500] }} aria-label='recipe'>
-						{/* {`${data.creator[0]}${data.creator[1]}`} */}
-					</Avatar>
-				}
-				action={
-					<>
-						<IconButton
-							aria-label='settings'
-							aria-controls={open ? "menu-options" : undefined}
-							aria-haspopup='true'
-							aria-expanded={open ? "true" : undefined}
-							onClick={handleMenuClick}
-						>
-							<MoreVertIcon />
-						</IconButton>
-						<Menu
-							id='menu-options'
-							anchorEl={anchorEl}
-							open={open}
-							onClose={handleMenuClose}
-							anchorOrigin={{
-								vertical: "bottom",
-								horizontal: "center",
+			<Box
+				sx={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+					mx: { xs: 2, sm: 4 },
+				}}
+			>
+				<CardHeader
+					avatar={
+						<Avatar sx={{ bgcolor: red[500] }} aria-label='recipe'>
+							{/* {`${data.creator[0]}${data.creator[1]}`} */}
+						</Avatar>
+					}
+					title='Hardcode'
+					subheader={data.createdAt.toLocaleString().slice(0, 10)}
+				/>
+				<Box>
+					<IconButton
+						aria-label='settings'
+						aria-controls={open ? "menu-options" : undefined}
+						aria-haspopup='true'
+						aria-expanded={open ? "true" : undefined}
+						onClick={handleMenuClick}
+					>
+						<MoreVertIcon />
+					</IconButton>
+					<Menu
+						id='menu-options'
+						anchorEl={anchorEl}
+						open={open}
+						onClose={handleMenuClose}
+						anchorOrigin={{
+							vertical: "bottom",
+							horizontal: "center",
+						}}
+						transformOrigin={{
+							vertical: "top",
+							horizontal: "right",
+						}}
+					>
+						<MenuItem
+							onClick={() => {
+								handleEditClick();
+								handleMenuClose();
 							}}
-							transformOrigin={{
-								vertical: "top",
-								horizontal: "right",
+						>
+							<ListItemIcon>
+								<EditIcon fontSize='small' />
+							</ListItemIcon>
+							<ListItemText>Edit</ListItemText>
+						</MenuItem>
+						<MenuItem
+							onClick={() => {
+								handleDeleteClick();
+								handleMenuClose();
 							}}
 						>
-							<MenuItem
-								onClick={() => {
-									handleEditClick();
-									handleMenuClose();
-								}}
-							>
-								<ListItemIcon>
-									<EditIcon fontSize='small' />
-								</ListItemIcon>
-								<ListItemText>Edit</ListItemText>
-							</MenuItem>
-							<MenuItem
-								onClick={() => {
-									handleDeleteClick();
-									handleMenuClose();
-								}}
-							>
-								<ListItemIcon>
-									<DeleteIcon fontSize='small' />
-								</ListItemIcon>
-								<ListItemText>Delete</ListItemText>
-							</MenuItem>
-						</Menu>
-					</>
-				}
-				title='Hardcode'
-				subheader={data.createdAt.toLocaleString().slice(0, 10)}
-			/>
+							<ListItemIcon>
+								<DeleteIcon fontSize='small' />
+							</ListItemIcon>
+							<ListItemText>Delete</ListItemText>
+						</MenuItem>
+					</Menu>
+				</Box>
+			</Box>
 			<Divider />
 			<Box
 				sx={{

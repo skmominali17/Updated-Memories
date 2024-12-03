@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 const postSchema = new mongoose.Schema({
     title: String,
     message: String,
-    // userId: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'User',
-    //     required: true,
-    // },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
     tags: [String],
     image: String,
     likeCount: {
@@ -16,6 +16,6 @@ const postSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-const PostMessage = mongoose.model('PostMessage', postSchema);
+const Post = mongoose.model('Post', postSchema);
 
-export default PostMessage;
+export default Post;

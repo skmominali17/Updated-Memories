@@ -1,7 +1,6 @@
 import { Box, MenuList, IconButton } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import StickyButton from "./CreatePostBtn";
 

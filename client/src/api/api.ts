@@ -1,11 +1,46 @@
 import axios from "axios";
-const url = "http://localhost:3000/";
 
-export const createPost = (data: any) => axios.post(`${url}create/post`, data)
-export const getPosts = () => axios.get(url)
-export const updatePostById = (id: any, data: any) => axios.put(`${url}post/edit/${id}`, data);
-export const deletePostById = (id: any) => axios.delete(`${url}post/delete/${id}`);
-export const register = (data: any) => axios.post(`${url}register`, data);
-export const login = (data: any) => axios.post(`${url}login`, data);
+const url = "http://localhost:3000";
 
+// Helper function to get the token
+const getToken = () => {
+	return localStorage.getItem("token");
+};
 
+// Create Post
+export const createPost = (data: any) =>
+	axios.post(`${url}/create/post`, data, {
+		headers: {
+			Authorization: `Bearer ${getToken()}`,
+		},
+	});
+
+// Get All Posts
+export const getPosts = () =>
+	axios.get(`${url}/get/all-posts`, {
+		headers: {
+			Authorization: `Bearer ${getToken()}`,
+		},
+	});
+
+// Update Post by ID
+export const updatePostById = (id: any, data: any) =>
+	axios.put(`${url}/update/post/${id}`, data, {
+		headers: {
+			Authorization: `Bearer ${getToken()}`,
+		},
+	});
+
+// Delete Post by ID
+export const deletePostById = (id: any) =>
+	axios.delete(`${url}/delete/post/${id}`, {
+		headers: {
+			Authorization: `Bearer ${getToken()}`,
+		},
+	});
+
+// Register
+export const register = (data: any) => axios.post(`${url}/register`, data);
+
+// Login
+export const login = (data: any) => axios.post(`${url}/login`, data);
