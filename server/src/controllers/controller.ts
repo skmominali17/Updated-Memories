@@ -1,133 +1,182 @@
 import { Request, Response } from "express";
-import PostMessage from "../models/postModel";
 import mongoose from "mongoose";
 import User from "../models/UserModel";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import Post from "../models/postModel";
+import { CustomRequest } from "../middlewares/middleware";
 
 export const register = async (req: Request, res: Response) => {
-  try {
-    // taking inputs from the body
-    const { name, email, password } = req.body;
-    // hashing the password with bcryptjs
-    const hashedPassword = await bcrypt.hash(password, 10);
-    // if user already exists in DB then return
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
-    }
-    // if user dosent exists then create a user in DB
-    const user = await User.create({ name, email, password: hashedPassword });
-    await user.save();
-    // Generate token with JWT
-    const token = jwt.sign({ id: user._id }, "shhh", { expiresIn: "1h" });
-    // set the token in authorization header
-    res.setHeader("Authorization", `Bearer ${token}`);
-    res.status(201).json({ message: "User registered successfully" });
-  } catch (error) {
-    console.log(error);
-  }
+	try {
+		const { name, email, password } = req.body;
+
+		// Hash the password
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		// Check if user already exists
+		const existingUser = await User.findOne({ email });
+		if (existingUser) {
+			return res.status(400).json({ message: "User already exists" });
+		}
+
+		// Create the user
+		const user = await User.create({ name, email, password: hashedPassword });
+
+		// Generate JWT Token
+		const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, {
+			expiresIn: "1h",
+		});
+
+		// Set token in authorization header
+		res.setHeader("Authorization", `Bearer ${token}`);
+
+		// Send response
+		res
+			.status(201)
+			.json({ message: "User registered successfully", userId: user._id });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Error registering user" });
+	}
 };
 
 export const login = async (req: Request, res: Response) => {
-  // taking inputs from body
-  const { email, password } = req.body;
-  // if email does not exists in DB then return
-  const user = await User.findOne({ email });
-  if (!user) {
-    return res.status(400).json({ message: "User does not exist" });
-  }
+	try {
+		const { email, password } = req.body;
 
-  // if email exists then verify the password with the hashed password
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    return res.status(400).json({ message: "Invalid password" });
-  }
+		// Check if user exists
+		const user = await User.findOne({ email });
+		if (!user) {
+			return res.status(400).json({ message: "User does not exist" });
+		}
 
-  // Generate Token
-  const token = jwt.sign({ id: user._id }, "shhh", { expiresIn: "1h" });
-  // set the authorization header
-  res.setHeader("Authorization", `Bearer ${token}`);
-  res.status(200).json({ message: "Login Succesfully" });
+		// Validate password
+		const isMatch = await bcrypt.compare(password, user.password);
+		if (!isMatch) {
+			return res.status(400).json({ message: "Invalid password" });
+		}
+
+		const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, {
+			expiresIn: "1h",
+		});
+
+		// Set token in authorization header
+		res.setHeader("Authorization", `Bearer ${token}`);
+
+		// Return success and token in the response
+		res
+			.status(200)
+			.json({ message: "Login successful", token, userId: user._id });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Error logging in" });
+	}
 };
 
 export const getPosts = async (req: Request, res: Response) => {
-  try {
-    const posts = await PostMessage.find();
-    res.status(200).json(posts);
-  } catch (error) {
-    console.log(error);
-  }
+	try {
+		const posts = await Post.find();
+		res.status(200).json(posts);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Error fetching posts" });
+	}
 };
 
 export const getPostById = async (req: Request, res: Response) => {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(404).json({
-        message: "Post not found",
-      });
-    }
-    const post = await PostMessage.findById(req.params.id);
-    res.status(200).json(post);
-  } catch (error) {
-    console.log(error);
-  }
+	try {
+		const postId = req.params.id;
+
+		if (!mongoose.Types.ObjectId.isValid(postId)) {
+			return res.status(404).json({ message: "Post not found" });
+		}
+
+		const post = await Post.findById(postId);
+
+		if (!post) {
+			return res.status(404).json({ message: "Post not found" });
+		}
+
+		res.status(200).json(post);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Error fetching post" });
+	}
 };
 
 export const deletePost = async (req: Request, res: Response) => {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(404).json({
-        message: "Post not found",
-      });
-    }
-    await PostMessage.findByIdAndDelete(req.params.id);
-    const availablePosts = await PostMessage.find();
-    res
-      .status(200)
-      .json({ message: "Post deleted successfully", availablePosts });
-  } catch (error) {
-    console.log(error);
-  }
+	try {
+		const postId = req.params.id;
+
+		if (!mongoose.Types.ObjectId.isValid(postId)) {
+			return res.status(404).json({ message: "Post not found" });
+		}
+
+		const post = await Post.findByIdAndDelete(postId);
+		if (!post) {
+			return res.status(404).json({ message: "Post not found" });
+		}
+
+		const availablePosts = await Post.find();
+		res
+			.status(200)
+			.json({ message: "Post deleted successfully", availablePosts });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Error deleting post" });
+	}
 };
 
-export const createPost = async (req: Request, res: Response) => {
-  try {
-    const post = new PostMessage({
-      title: req.body.Title,
-      message: req.body.Message,
-      tags: req.body.Tags,
-      image: req.body.Image,
-    });
+export const createPost = async (req: CustomRequest, res: Response) => {
+	try {
+		if (!req.user) {
+			return res.status(401).json({ message: "Unauthorized, please login" });
+		}
 
-    await post.save();
-    res.status(200).json({ message: "Post Created Successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error creating post" });
-  }
+		const { title, message, tags, image } = req.body;
+
+		const post = new Post({
+			title,
+			message,
+			tags,
+			image,
+			userId: req.user._id,
+		});
+
+		await post.save();
+		res.status(200).json({ message: "Post created successfully", post });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Error creating post" });
+	}
 };
 
 export const updatePost = async (req: Request, res: Response) => {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(404).json({
-        message: "Post Not Found",
-      });
-    }
+	try {
+		const postId = req.params.id;
 
-    const post = await PostMessage.findByIdAndUpdate(
-      req.params.id,
-      {
-        title: req.body.Title,
-        message: req.body.Message,
-        tags: req.body.Tags,
-        image: req.body.Image,
-      },
-      {
-        new: true,
-      }
-    );
-    res.status(200).json({ message: "Post Updated Successfully", post });
-  } catch (error) {}
+		if (!mongoose.Types.ObjectId.isValid(postId)) {
+			return res.status(404).json({ message: "Post not found" });
+		}
+
+		const updatedPost = await Post.findByIdAndUpdate(
+			postId,
+			{
+				title: req.body.title,
+				message: req.body.message,
+				tags: req.body.tags,
+				image: req.body.image,
+			},
+			{ new: true }
+		);
+
+		if (!updatedPost) {
+			return res.status(404).json({ message: "Post not found" });
+		}
+
+		res.status(200).json({ message: "Post updated successfully", updatedPost });
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Error updating post" });
+	}
 };

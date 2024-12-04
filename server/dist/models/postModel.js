@@ -7,11 +7,11 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const postSchema = new mongoose_1.default.Schema({
     title: String,
     message: String,
-    // userId: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'User',
-    //     required: true,
-    // },
+    userId: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
     tags: [String],
     image: String,
     likeCount: {
@@ -19,5 +19,5 @@ const postSchema = new mongoose_1.default.Schema({
         default: 0
     }
 }, { timestamps: true });
-const PostMessage = mongoose_1.default.model('PostMessage', postSchema);
-exports.default = PostMessage;
+const Post = mongoose_1.default.model('Post', postSchema);
+exports.default = Post;

@@ -13,54 +13,67 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updatePost = exports.createPost = exports.deletePost = exports.getPostById = exports.getPosts = exports.login = exports.register = void 0;
-const postModel_1 = __importDefault(require("../models/postModel"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const UserModel_1 = __importDefault(require("../models/UserModel"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const postModel_1 = __importDefault(require("../models/postModel"));
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // taking inputs from the body
         const { name, email, password } = req.body;
-        // hashing the password with bcryptjs
+        // Hash the password
         const hashedPassword = yield bcryptjs_1.default.hash(password, 10);
-        // if user already exists in DB then return
+        // Check if user already exists
         const existingUser = yield UserModel_1.default.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: "User already exists" });
         }
-        // if user dosent exists then create a user in DB
+        // Create the user
         const user = yield UserModel_1.default.create({ name, email, password: hashedPassword });
-        yield user.save();
-        // Generate token with JWT
-        const token = jsonwebtoken_1.default.sign({ id: user._id }, "shhh", { expiresIn: "1h" });
-        // set the token in authorization header
+        // Generate JWT Token
+        const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: "1h",
+        });
+        // Set token in authorization header
         res.setHeader("Authorization", `Bearer ${token}`);
-        res.status(201).json({ message: "User registered successfully" });
+        // Send response
+        res
+            .status(201)
+            .json({ message: "User registered successfully", userId: user._id });
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
+        res.status(500).json({ message: "Error registering user" });
     }
 });
 exports.register = register;
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // taking inputs from body
-    const { email, password } = req.body;
-    // if email does not exists in DB then return
-    const user = yield UserModel_1.default.findOne({ email });
-    if (!user) {
-        return res.status(400).json({ message: "User does not exist" });
+    try {
+        const { email, password } = req.body;
+        // Check if user exists
+        const user = yield UserModel_1.default.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: "User does not exist" });
+        }
+        // Validate password
+        const isMatch = yield bcryptjs_1.default.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Invalid password" });
+        }
+        const token = jsonwebtoken_1.default.sign({ id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: "1h",
+        });
+        // Set token in authorization header
+        res.setHeader("Authorization", `Bearer ${token}`);
+        // Return success and token in the response
+        res
+            .status(200)
+            .json({ message: "Login successful", token, userId: user._id });
     }
-    // if email exists then verify the password with the hashed password
-    const isMatch = yield bcryptjs_1.default.compare(password, user.password);
-    if (!isMatch) {
-        return res.status(400).json({ message: "Invalid password" });
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error logging in" });
     }
-    // Generate Token
-    const token = jsonwebtoken_1.default.sign({ id: user._id }, "shhh", { expiresIn: "1h" });
-    // set the authorization header
-    res.setHeader("Authorization", `Bearer ${token}`);
-    res.status(200).json({ message: "Login Succesfully" });
 });
 exports.login = login;
 const getPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -69,53 +82,65 @@ const getPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(200).json(posts);
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
+        res.status(500).json({ message: "Error fetching posts" });
     }
 });
 exports.getPosts = getPosts;
 const getPostById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (!mongoose_1.default.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(404).json({
-                message: "Post not found",
-            });
+        const postId = req.params.id;
+        if (!mongoose_1.default.Types.ObjectId.isValid(postId)) {
+            return res.status(404).json({ message: "Post not found" });
         }
-        const post = yield postModel_1.default.findById(req.params.id);
+        const post = yield postModel_1.default.findById(postId);
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
         res.status(200).json(post);
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
+        res.status(500).json({ message: "Error fetching post" });
     }
 });
 exports.getPostById = getPostById;
 const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (!mongoose_1.default.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(404).json({
-                message: "Post not found",
-            });
+        const postId = req.params.id;
+        if (!mongoose_1.default.Types.ObjectId.isValid(postId)) {
+            return res.status(404).json({ message: "Post not found" });
         }
-        yield postModel_1.default.findByIdAndDelete(req.params.id);
+        const post = yield postModel_1.default.findByIdAndDelete(postId);
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
         const availablePosts = yield postModel_1.default.find();
         res
             .status(200)
             .json({ message: "Post deleted successfully", availablePosts });
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
+        res.status(500).json({ message: "Error deleting post" });
     }
 });
 exports.deletePost = deletePost;
 const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        if (!req.user) {
+            return res.status(401).json({ message: "Unauthorized, please login" });
+        }
+        const { title, message, tags, image } = req.body;
         const post = new postModel_1.default({
-            title: req.body.Title,
-            message: req.body.Message,
-            tags: req.body.Tags,
-            image: req.body.Image,
+            title,
+            message,
+            tags,
+            image,
+            userId: req.user._id,
         });
         yield post.save();
-        res.status(200).json({ message: "Post Created Successfully" });
+        res.status(200).json({ message: "Post created successfully", post });
     }
     catch (error) {
         console.error(error);
@@ -125,21 +150,24 @@ const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.createPost = createPost;
 const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (!mongoose_1.default.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(404).json({
-                message: "Post Not Found",
-            });
+        const postId = req.params.id;
+        if (!mongoose_1.default.Types.ObjectId.isValid(postId)) {
+            return res.status(404).json({ message: "Post not found" });
         }
-        const post = yield postModel_1.default.findByIdAndUpdate(req.params.id, {
-            title: req.body.Title,
-            message: req.body.Message,
-            tags: req.body.Tags,
-            image: req.body.Image,
-        }, {
-            new: true,
-        });
-        res.status(200).json({ message: "Post Updated Successfully", post });
+        const updatedPost = yield postModel_1.default.findByIdAndUpdate(postId, {
+            title: req.body.title,
+            message: req.body.message,
+            tags: req.body.tags,
+            image: req.body.image,
+        }, { new: true });
+        if (!updatedPost) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+        res.status(200).json({ message: "Post updated successfully", updatedPost });
     }
-    catch (error) { }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error updating post" });
+    }
 });
 exports.updatePost = updatePost;

@@ -13,83 +13,99 @@ import { useNavigate } from "react-router-dom";
 import { grey } from "@mui/material/colors";
 
 function Navbar() {
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-    null
-  );
-  const navigate = useNavigate()
+	const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
+		null
+	);
+	const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+	const navigate = useNavigate();
 
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
+	const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorElUser(event.currentTarget);
+	};
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
+	const handleCloseUserMenu = () => {
+		setAnchorElUser(null);
+	};
 
-  return (
-    <AppBar position="fixed" sx={{ backgroundColor: grey[500] }}>
-      <Toolbar disableGutters>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-            px: 4,
-          }}
-        >
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            Memories
-          </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Box>
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-              >
-                <MenuItem onClick={handleCloseUserMenu}>Profile</MenuItem>
-                <MenuItem onClick={handleCloseUserMenu}>Account</MenuItem>
-                <MenuItem onClick={handleCloseUserMenu}>Dashboard</MenuItem>
-                <MenuItem onClick={handleCloseUserMenu}>Logout</MenuItem>
-              </Menu>
-            </Box>
-            <Box>
-              <Button sx={{color: "white"}} onClick={()=>navigate('/login')
+	React.useEffect(() => {
+		if (localStorage.getItem("token")) {
+			setIsLoggedIn(true);
+		}
+	}, []);
 
-              }>Login</Button>
-            </Box>
-          </Box>
-        </Box>
-      </Toolbar>
-    </AppBar>
-  );
+  function handleLogout(): void {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    navigate("/login");
+  }
+
+	return (
+		<AppBar position='fixed' sx={{ backgroundColor: grey[500] }}>
+			<Toolbar disableGutters>
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "space-between",
+						width: "100%",
+						px: 4,
+					}}
+				>
+					<Typography
+						variant='h6'
+						noWrap
+						component='a'
+						href='#app-bar-with-responsive-menu'
+						sx={{
+							mr: 2,
+							color: "inherit",
+							textDecoration: "none",
+						}}
+					>
+						Memories
+					</Typography>
+					<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+						<Box>
+							<Tooltip title='Open settings'>
+								<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+									<Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' />
+								</IconButton>
+							</Tooltip>
+							<Menu
+								sx={{ mt: "45px" }}
+								id='menu-appbar'
+								anchorEl={anchorElUser}
+								anchorOrigin={{
+									vertical: "top",
+									horizontal: "right",
+								}}
+								keepMounted
+								transformOrigin={{
+									vertical: "top",
+									horizontal: "right",
+								}}
+								open={Boolean(anchorElUser)}
+								onClose={handleCloseUserMenu}
+							>
+								<MenuItem onClick={handleCloseUserMenu}>Profile</MenuItem>
+								<MenuItem onClick={handleCloseUserMenu}>Account</MenuItem>
+								<MenuItem onClick={handleCloseUserMenu}>Dashboard</MenuItem>
+								<MenuItem onClick={handleCloseUserMenu}>Logout</MenuItem>
+							</Menu>
+						</Box>
+						<Box>
+							<Button
+								sx={{ color: "white" }}
+								onClick={() => isLoggedIn ? handleLogout() : navigate("/login")}
+							>
+								{isLoggedIn ? "Logout" : "Login"}
+							</Button>
+						</Box>
+					</Box>
+				</Box>
+			</Toolbar>
+		</AppBar>
+	);
 }
 
 export default Navbar;
