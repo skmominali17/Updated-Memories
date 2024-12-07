@@ -14,10 +14,10 @@ const postSchema = new mongoose_1.default.Schema({
     },
     tags: [String],
     image: String,
-    likeCount: {
-        type: Number,
-        default: 0
-    }
+    likeCount: [{
+            type: Number,
+            default: 0
+        }]
 }, { timestamps: true });
 const Post = mongoose_1.default.model('Post', postSchema);
 exports.default = Post;

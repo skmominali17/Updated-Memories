@@ -11,6 +11,9 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { login } from "../api/api";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {setUserDetails} from "../../store/slices/userSlice";
+
 
 function Copyright(props: any) {
   return (
@@ -32,6 +35,10 @@ function Copyright(props: any) {
 
 export default function Login() {
   const navigate = useNavigate();
+  const userObject = useSelector((state: any) => state.user);
+  console.log(userObject);
+  const dispatch = useDispatch();
+  
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -41,11 +48,13 @@ export default function Login() {
     };
 
     try {
-      const resposne = await login(formData);
-      const authHeader = resposne.headers["authorization"];
+      const response = await login(formData);
+      console.log("reponse", response)
+      const authHeader = response.headers["authorization"];
       if (authHeader) {
         const token = authHeader.split(" ")[1];
         localStorage.setItem("token", token);
+        dispatch(setUserDetails(response.data.user))
         navigate("/");
         console.log(token);
       }

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePost = exports.createPost = exports.deletePost = exports.getPostById = exports.getPosts = exports.login = exports.register = void 0;
+exports.likePost = exports.updatePost = exports.createPost = exports.deletePost = exports.getPostById = exports.getPosts = exports.login = exports.register = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const UserModel_1 = __importDefault(require("../models/UserModel"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -68,7 +68,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // Return success and token in the response
         res
             .status(200)
-            .json({ message: "Login successful", token, userId: user._id });
+            .json({ message: "Login successful", token, userId: user._id, user: user });
     }
     catch (error) {
         console.error(error);
@@ -79,6 +79,7 @@ exports.login = login;
 const getPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const posts = yield postModel_1.default.find();
+        // console.log(req.user);
         res.status(200).json(posts);
     }
     catch (error) {
@@ -171,3 +172,13 @@ const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.updatePost = updatePost;
+const likePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const postId = req.params;
+    const Updatedpost = yield postModel_1.default.findByIdAndUpdate(postId.id, { $inc: { likeCount: 1 } }, { new: true });
+    res.json(Updatedpost);
+    console.log(Updatedpost);
+    console.log(postId.id);
+    console.log("HI!");
+    //   res.json({ message: "POST LIKED!" });
+});
+exports.likePost = likePost;

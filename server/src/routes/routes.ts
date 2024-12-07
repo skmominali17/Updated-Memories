@@ -4,6 +4,7 @@ import {
 	deletePost,
 	getPostById,
 	getPosts,
+	likePost,
 	login,
 	register,
 	updatePost,
@@ -23,5 +24,6 @@ router.get("/get/post/:id", getPostById);
 router.post("/create/post", isAuthenticated, createPost);
 router.put("/update/post/:id", isAuthenticated, isPostOwner, updatePost);
 router.delete("/delete/post/:id", isAuthenticated, isPostOwner, deletePost);
+router.post("/like/post/:id",likePost);
 
 export default router;

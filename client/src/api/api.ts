@@ -39,6 +39,14 @@ export const deletePostById = (id: any) =>
 		},
 	});
 
+// Like Post
+export const likePost = async (id:any) =>{
+	  const response=await axios.post(`${url}/like/post/${id}/`)
+	  return response.data;
+	  console.log(`Post Liked! ${id}`);
+	  
+}	
+
 // Register
 export const register = (data: any) => axios.post(`${url}/register`, data);
 
